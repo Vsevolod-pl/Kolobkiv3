@@ -1,12 +1,12 @@
-item[] typeItems=new item[6];
+item[] typeItems=new item[7];
 BloodSystem blood ;//= new BloodSystem();
 ArrayList<bullet> bullets = new ArrayList<bullet>();
 ArrayList<colobok> enemies=new ArrayList<colobok>();
 ArrayList<colobok> ally = new ArrayList<colobok>();
 ArrayList<item> items = new ArrayList<item>();
 PVector line;
-int lvl,maxlvl,tw=0;//show maxlvl and save it
-float dx,dy;
+int lvl,maxlvl,tw=0,pw;//show maxlvl and save it
+float dx,dy,edx,edy,explosionPower; // explision dx,dy
 player player;
 //show enemies, who aren't on screen, by arrows
 
@@ -34,9 +34,9 @@ void lvlUp(){
   //player.regtime+=100;
   enemies.clear();
   //bullets.clear();
-  for (int i=0; i<lvl; i++) {
+  for (int i=0; i<lvl%20; i++) {
     bot b=new bot(
-    min(int(random(lvl)),3));
+    min(int(random(lvl/5)),4));
     b.setEnemies(ally);
     /*b.x=random(width);
     b.y=random(height);*/
@@ -97,7 +97,7 @@ void setup() {
   player.regtime=1000;
   ally.add(player);
   for (int i=0; i<lvl; i++) {
-    bot b=new bot(0);
+    bot b=new dummy_bot(0);
     b.setEnemies(ally);
     b.x=random(width);
     b.y=random(height);
@@ -106,8 +106,19 @@ void setup() {
 }
 
 void keyPressed(){
-  /*player.setWeapon(6);
-  player.weapon.en=enemies;*/
+  /**/
+  
+  if(keyCode==24){
+    pw=(pw+1)%7;
+  }
+  if(keyCode==25){
+    pw=(pw+6)%7;
+  }
+  
+  player.setWeapon(pw);
+  player.weapon.en=enemies;
+  
+  explosionPower+=20;
   player.regeneration=1000;
   player.regtime+=100000;
   player.maxhp=10000;
@@ -123,13 +134,24 @@ void onBackPressed(){
 }
 
 void draw() {
-  //println(1);
   background(0);
+  /*noStroke();
+  fill(0,2);
+  rect(0,0,width,height);*/
   
   fill(255);
   textSize(30*mx);
   textAlign(LEFT,TOP);
   text("Wave : "+str(lvl)+"\nMaximum wave : "+str(maxlvl),100,100);
+  
+  //Explosion shaking
+  if(explosionPower>0){
+    edx=explosionPower*cos(random(explosionPower));
+    edy=explosionPower*sin(random(explosionPower));
+    explosionPower-=1;
+  }else if(explosionPower<0){
+    explosionPower=0;
+  }
   
   if (player.x+4*player.r-dx>width) {
     dx=player.x+4*player.r-width;
@@ -146,10 +168,8 @@ void draw() {
     //dy=0;
   }
   
-  translate(-dx, -dy);
-  /*noStroke();
-  fill(0,20);
-  rect(0,0,width,height);*/
+  translate(edx-dx, edy-dy);
+  
   blood.update();
   blood.display();
   

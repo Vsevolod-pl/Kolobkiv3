@@ -9,8 +9,8 @@ class item {
     y=iy;
     name=iname;
     img=loadImage(name+".png");
-    lx=int(2*img.width*mx);
-    ly=int(2*img.height*mx);
+    lx=int(4*img.width*mx);
+    ly=int(4*img.height*mx);
   }
 
   void use() {
@@ -21,7 +21,7 @@ class item {
     fill(255);
     textSize(30*mx);
     textAlign(CENTER,BOTTOM);
-    text(name, x+lx/2, y+ly/3);
+    text(name, x+lx/2, y-ly/3);
   }
 
   item get(int nx, int ny) {

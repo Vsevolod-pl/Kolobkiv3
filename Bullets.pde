@@ -72,6 +72,7 @@ class rocket extends bullet {
   }
 
   void Detonate() {
+    explosionPower+=20*mx;
     for (float angle=0; angle<TWO_PI; angle+=PI/40) {
       //bullets.add(new bullet(e.x/*+(1+e.r)*cos(angle)*/,e.y/*+(1+e.r)*sin(angle)*/, 20, new PVector(speed*cos(angle), speed*sin(angle))));
       for (float speed=3; speed>2.6; speed*=0.9) {
@@ -116,7 +117,7 @@ class rocket extends bullet {
   }
 }
 
-class turret extends bullet {
+class turret extends bullet{
   int dmg, blife=1000;
   float cd, t, speed=10, angle, shootDist;
   colobok owner, ne;
@@ -132,19 +133,6 @@ class turret extends bullet {
   }
 
   void foundEnemy() {
-    /*for (colobok e : en) {
-     if (ne!=null) {
-     if (e.hp>0 && e!=owner) {
-     if (ne.hp<=0) {
-     ne=e;
-     } else if (dist(owner.x, owner.y, e.x, e.y)<dist(owner.x, owner.y, ne.x, ne.y)) {
-     ne=e;
-     }
-     }
-     } else if (e!=owner) {
-     ne=e;
-     }
-     }*/
     if (en.size()>=1) {
       ne=(colobok) en.get(int(random(en.size())));
     }
@@ -152,9 +140,13 @@ class turret extends bullet {
 
   void shoot() {
     if (ne!=null) {
-      float time=dist(ne.x, ne.y, x, y)/speed, 
-        tx=ne.x+ne.velocity.x*time, 
-        ty=ne.y+ne.velocity.y*time;
+      float vx=ne.velocity.x,
+      vy=ne.velocity.y;
+  
+      float time=dist(x,y,ne.x,ne.y)/speed;
+      time=dist(x,y,ne.x+vx*t,ne.y+vy*t)/speed;
+      float tx=ne.x+ne.velocity.x*time, 
+      ty=ne.y+ne.velocity.y*time;
       angle=atan2(ty-y, tx-x);
       //angle=atan2(ne.y-y,ne.x-x);
       if (t<=0 && dist(ne.x, ne.y, owner.x, owner.y)<=shootDist) {
@@ -169,6 +161,27 @@ class turret extends bullet {
       }
     }
   }
+  
+  void Detonate() {
+    explosionPower+=20*mx;
+    for (float angle=0; angle<TWO_PI; angle+=PI/40) {
+      //bullets.add(new bullet(e.x/*+(1+e.r)*cos(angle)*/,e.y/*+(1+e.r)*sin(angle)*/, 20, new PVector(speed*cos(angle), speed*sin(angle))));
+      for (float speed=3; speed>2.6; speed*=0.9) {
+        bullets.add(new bullet(x, y, 20, int(10*mx), new PVector(speed*10*cos(angle), speed*10*sin(angle))));
+      }
+    }
+    life=-1;
+  }
+  
+  void explode() {
+    for (colobok e : en) {
+      if ((dist(x, y,e.x,e.y)<250*mx &&
+      dist(x,y,owner.x,owner.y)>270*mx) || life<=1) {
+        Detonate();
+        break;
+      }
+    }
+  }
 
   void display() {
     noStroke();
@@ -176,31 +189,18 @@ class turret extends bullet {
     rect(x-5, y-5, 10, 10);
   }
 
-  /* if (ne!=null)
-   velocity.rotate(atan2(ne.y-y, ne.x-x)-velocity.heading());
-   else
-   foundEnemy(); */
-
   void updateVel() {
-
     velocity.mult(0);
-    for (colobok e : en) {
-      velocity.x+=e.x-x;
-      velocity.y+=e.y-y;
-    }
+    velocity.x=owner.x-x;
+    velocity.y=owner.y-y;
     velocity.limit(2);
   }
 
   void move() {
     updateVel();
-    //super.move();
-    if (x-velocity.x<0) velocity.x*=-1;// x=0+abs(velocity.x);
-    if (x-velocity.x>width) velocity.x*=-1;// x=width-abs(velocity.x);
-    if (y-velocity.y<0) velocity.y*=-1;// y=0+abs(velocity.y);
-    if (y-velocity.y>height) velocity.y*=-1;// y=height-abs(velocity.y);
-
-    x-=velocity.x;
-    y-=velocity.y;
+    super.move();
+    if(owner.pointIn(x,y))
+      velocity.mult(-1);
     while (owner.pointIn (x, y)) {
       super.move();
     }
@@ -212,12 +212,8 @@ class turret extends bullet {
     move();
     shoot();
     display();
+    explode();
     if (ne.hp<=0) ne=null;
   }
 }
 
-/*class explosion extends bullets{
-  bullet(float ix, float iy, int idmg, int lf, PVector v){
-    super(ix,iy,idmg,lf,v.mult(0));
-  }
-}*/

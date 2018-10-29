@@ -69,13 +69,13 @@ class colobok {
       weapon=new rLauncher(this, 50, 100);
       break;
     case 5:
-      weapon=new tMaker(this, 10, 10, 1000*mx);
+      weapon=new tMaker(this, 50, 10, 1000*mx);
       break;
     case 6:
-      weapon=new rLauncher(this, 0, 100);
+      weapon=new laser(this, 0, 1, 1000*mx);
       break;
     case 7:
-      weapon=new laser(this, 0, 1, 1000*mx);
+      weapon=new rLauncher(this, 0, 100);
     }
   }
 
@@ -182,6 +182,24 @@ class bot extends colobok {
   void update() {
     foundNearEnemy();
     super.update();
+  }
+}
+
+class dummy_bot extends bot{
+  dummy_bot(int wtype) {
+    super(wtype);
+  }
+
+  dummy_bot(float ix, float iy, float r, float ihp, float iv, int wt) {
+    super(ix, iy, r, ihp, iv, wt);
+    //weapon.
+  }
+  
+  void update(){
+    hp=maxhp;
+    weapon.t=weapon.cd;
+    super.update();
+    //display();
   }
 }
 
