@@ -74,6 +74,7 @@ class rocket extends bullet {
 
   void Detonate() {
     explosionPower+=20*mx;
+    ess.add();
     for (float angle=0; angle<TWO_PI; angle+=PI/40) {
       //bullets.add(new bullet(e.x/*+(1+e.r)*cos(angle)*/,e.y/*+(1+e.r)*sin(angle)*/, 20, new PVector(speed*cos(angle), speed*sin(angle))));
       for (float speed=3; speed>2.6; speed*=0.9) {

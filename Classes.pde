@@ -38,8 +38,9 @@ class colobok {
 
   boolean audioIsPlaying() {
     try {
-      return audio.getCurrentPosition()>=audio.getDuration();
-      // || audio.isPlaying();
+      //return audio.getCurrentPosition()>=audio.getDuration();
+      // ||
+      return audio.isPlaying();
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -135,6 +136,11 @@ class player extends colobok {
     moveTo(mouseX+dx, mouseY+dy);
     super.update();
   }
+  
+  void audioStart(){
+    //TODO make it more quiet
+  }
+  
   /*void setAudioFile(String name) {
    
    }
@@ -332,6 +338,33 @@ class BloodSystem {
       if (s.life<0) {
         blood_spots.remove(i--);
       }
+    }
+  }
+}
+
+//TODO Change name
+//Explosion Sound System
+class ESS{
+  ArrayList<AudioPlayerMy> exs;
+  ESS(){
+    exs=new ArrayList<AudioPlayerMy>();
+  }
+  
+  void add(){
+    AudioPlayerMy a=new AudioPlayerMy();
+    a.loadFile("explosion.mp3");
+    a.start();
+    exs.add(a);
+  }
+  
+  void clean(){
+    for(int i=0;i<exs.size();i++){
+      AudioPlayerMy a = (AudioPlayerMy) exs.get(i);
+      if(!a.isPlaying()){
+        a.release();
+        exs.remove(i--);
+      }
+      
     }
   }
 }

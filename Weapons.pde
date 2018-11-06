@@ -40,6 +40,9 @@ class weapon {
   }
 
   void playShotSound() {
+    float volume=100*mx/dist(owner.x,owner.y,player.x,player.y);
+    volume=min(1,volume);
+    owner.audio.setVolume(volume,volume);
     if (!owner.audioIsPlaying()) {
       owner.audioStart();
     }
@@ -48,7 +51,7 @@ class weapon {
   void shoot() {
     if (ne!=null) {
       angle=atan2(ne.y-owner.y, ne.x-owner.x);
-      if ((t<=0 && !owner.audioIsPlaying()) && dist(ne.x, ne.y, owner.x, owner.y)<=shootDist) {
+      if ((t<=0 /*|| !owner.audioIsPlaying()*/) && dist(ne.x, ne.y, owner.x, owner.y)<=shootDist) {
         //if (atan2(ne.y-y, ne.x-x)>angle-dAngle && atan2(ne.y-y, ne.x-x)<angle+dAngle) {
         /*float shootX, shootY;
          shootX=ne.x+random(-ne.r, ne.r);

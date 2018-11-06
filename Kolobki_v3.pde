@@ -1,5 +1,6 @@
 item[] typeItems=new item[7];
 BloodSystem blood ;//= new BloodSystem();
+ESS ess;
 ArrayList<bullet> bullets = new ArrayList<bullet>();
 ArrayList<colobok> enemies=new ArrayList<colobok>();
 ArrayList<colobok> ally = new ArrayList<colobok>();
@@ -71,13 +72,15 @@ void setup() {
   size(displayWidth,displayHeight,P2D);
   mx=max(width,height)/1280;
   background=loadImage("grass.jpg");
-  
+  background.resize(100,100);
   typeItems[0]=new medKit(-100,-100);
   for(int i=1; i<typeItems.length; i++){
     //if(i!=4)
     typeItems[i]=new weaponChanger(-100,-100,i);
     //else typeItems[i]=new medKit(-100,-100);
   } 
+  
+  ess=new ESS();
   blood= new BloodSystem();
   
   lvl=1;
@@ -140,8 +143,12 @@ void onBackPressed(){
 void draw() {
   
   int bw=background.width,bh=background.height;
-  
-  set(int(-dx%bw)-bw,int(-dy%bh)-bh,background);
+  for(int bx=int(-dx%bw)-bw;bx<width;bx+=bw){
+    for(int by=int(-dy%bh)-bh;by<height;by+=bh){
+      set(bx,by,background);
+    }
+  }
+  /*set(int(-dx%bw)-bw,int(-dy%bh)-bh,background);
   set(int(-dx%bw),int(-dy%bh)-bh,background);
   set(int(-dx%bw)+bw,int(-dy%bh)-bh,background);
   set(int(-dx%bw)+bw,int(-dy%bh),background);
@@ -149,7 +156,7 @@ void draw() {
   set(int(-dx%bw),int(-dy%bh)+bh,background);
   set(int(-dx%bw)-bw,int(-dy%bh)+bh,background);
   set(int(-dx%bw)-bw,int(-dy%bh),background);/**/
-  set(int(-dx%bw),int(-dy%bh),background);
+  //set(int(-dx%bw),int(-dy%bh),background);
   //background(0);
   /*noStroke();
   fill(0,2);
@@ -188,6 +195,7 @@ void draw() {
   
   blood.update();
   blood.display();
+  ess.clean();
   
   for(int i=0;i<bullets.size();i++){
     bullet b= bullets.get(i);
