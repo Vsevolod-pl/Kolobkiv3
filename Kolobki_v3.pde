@@ -37,7 +37,7 @@ void lvlUp(){
   player.speed=6+lvl/10;
   enemies.clear();
   //bullets.clear();
-  for (int i=0; i<lvl%20; i++) {
+  for (int i=0; i<lvl%15; i++) {
     bot b=new bot(
     min(int(random(lvl/5)),4));
     b.setEnemies(ally);
@@ -71,8 +71,10 @@ void lvlUp(){
 void setup() {
   size(displayWidth,displayHeight,P2D);
   mx=max(width,height)/1280;
+  
   background=loadImage("grass.jpg");
-  background.resize(100,100);
+  //background.resize(100,100);
+  
   typeItems[0]=new medKit(-100,-100);
   for(int i=1; i<typeItems.length; i++){
     //if(i!=4)
