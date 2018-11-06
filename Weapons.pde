@@ -5,10 +5,10 @@ class weapon {
   ArrayList<colobok> en;
   weapon(colobok o, float icd, int idmg, float shd) {
     //audio.loadFile("shot.mp3");
-    this(o,icd,idmg,shd,"shot.mp3");
+    this(o, icd, idmg, shd, "shot.mp3");
   }
-  
-  weapon(colobok o, float icd, int idmg, float shd, String filename){
+
+  weapon(colobok o, float icd, int idmg, float shd, String filename) {
     t=0;
     owner=o;
     cd=icd;
@@ -17,9 +17,9 @@ class weapon {
     owner.setAudioFile(filename);
     t=int(random(cd));
     /*if(icd<1){
-      owner.audio.setLooping(true);
-      println("loop");
-    }*/
+     owner.audio.setLooping(true);
+     println("loop");
+     }*/
   }
 
   void foundNearEnemy() {
@@ -38,9 +38,9 @@ class weapon {
         }
       }
   }
-  
-  void playShotSound(){
-    if(!owner.audioIsPlaying()){
+
+  void playShotSound() {
+    if (!owner.audioIsPlaying()) {
       owner.audioStart();
     }
   }
@@ -48,7 +48,7 @@ class weapon {
   void shoot() {
     if (ne!=null) {
       angle=atan2(ne.y-owner.y, ne.x-owner.x);
-      if (t<=0 && dist(ne.x, ne.y, owner.x, owner.y)<=shootDist) {
+      if ((t<=0 && !owner.audioIsPlaying()) && dist(ne.x, ne.y, owner.x, owner.y)<=shootDist) {
         //if (atan2(ne.y-y, ne.x-x)>angle-dAngle && atan2(ne.y-y, ne.x-x)<angle+dAngle) {
         /*float shootX, shootY;
          shootX=ne.x+random(-ne.r, ne.r);
@@ -58,7 +58,7 @@ class weapon {
         t=cd;
         //line(x+size*cos(angle), y+size*sin(angle), shootX, shootY);
         //}
-      }else{
+      } else {
         //audio.pause();
       }
     }
@@ -78,20 +78,20 @@ class weapon {
   }
 }
 
-class shotgun extends weapon{
+class shotgun extends weapon {
   shotgun(colobok o, float icd, int idmg, float shd) {
-    super(o,icd,idmg,shd,"shotgun.mp3");
+    super(o, icd, idmg, shd, "shotgun.mp3");
   }
-  
-  void shoot(){
+
+  void shoot() {
     if (ne!=null) {
       angle=atan2(ne.y-owner.y, ne.x-owner.x);
       if (t<=0 && dist(ne.x, ne.y, owner.x, owner.y)<=shootDist) {
         playShotSound();
-        for(int i=0;i<10;i++){
+        for (int i=0; i<10; i++) {
           float da=(random(1)-0.5)*QUARTER_PI*0.3;
-          bullets.add(new bullet(owner.x+(1+owner.r)*cos(angle+da),
-           owner.y+(1+owner.r)*sin(angle+da), dmg, blife,
+          bullets.add(new bullet(owner.x+(1+owner.r)*cos(angle+da), 
+            owner.y+(1+owner.r)*sin(angle+da), dmg, blife, 
             new PVector(speed*cos(angle+da), speed*sin(angle+da))));
         }
         t=cd;
@@ -123,7 +123,7 @@ class sWeapon extends weapon {
 
 class fWeapon extends weapon {
   fWeapon(colobok o, float icd, int idmg, float shd) {
-    super(o, icd, idmg, shd,"shotgun.mp3");
+    super(o, icd, idmg, shd, "shotgun.mp3");
   }
 
   void shoot() {
@@ -183,12 +183,12 @@ class tMaker extends weapon {
   }
 }
 
-class laser extends weapon{
- laser(colobok o, float icd, int dmg, float shd){
-   super(o,icd,dmg,shd);
- }
- 
- void shoot() {
+class laser extends weapon {
+  laser(colobok o, float icd, int dmg, float shd) {
+    super(o, icd, dmg, shd);
+  }
+
+  void shoot() {
     if (ne!=null) {
       angle=atan2(ne.y-owner.y, ne.x-owner.x);
       if (t<=0 && dist(ne.x, ne.y, owner.x, owner.y)<=shootDist) {
@@ -196,12 +196,12 @@ class laser extends weapon{
         float shootX, shootY;
         shootX=ne.x;//+random(-ne.r, ne.r);
         shootY=ne.y;//+random(-ne.r, ne.r);
-        for(int i=0; i<10;i++){
+        for (int i=0; i<10; i++) {
           strokeWeight(10-i);
-          stroke(255,255*i/10,255*i/10,255*(10-i)/10);
-          line(owner.x,owner.y,shootX,shootY);
+          stroke(255, 255*i/10, 255*i/10, 255*(10-i)/10);
+          line(owner.x, owner.y, shootX, shootY);
         }
-        if(dist(ne.x,ne.y,shootX,shootY)<ne.r){
+        if (dist(ne.x, ne.y, shootX, shootY)<ne.r) {
           ne.hp-=dmg;
         }
         //bullets.add(new bullet(owner.x+(1+owner.r)*cos(angle), owner.y+(1+owner.r)*sin(angle), dmg, blife, new PVector(speed*cos(angle), speed*sin(angle))));

@@ -38,7 +38,8 @@ class colobok {
 
   boolean audioIsPlaying() {
     try {
-      return audio.isPlaying();
+      return audio.getCurrentPosition()>=audio.getDuration();
+      // || audio.isPlaying();
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -48,6 +49,7 @@ class colobok {
 
   void audioStart() {
     //if(dist(x,y,player.x,player.y)<10);
+    audio.seekTo(0);
     audio.start();
   }
 
@@ -57,10 +59,10 @@ class colobok {
       weapon=new weapon(this, 20, 20, 1000*mx);
       break;
     case 1:
-      weapon=new weapon(this, 0, 2, 1000*mx, "machine_gun.mp3");
+      weapon=new weapon(this, 2, 4, 1000*mx, "machine_gun.mp3");
       break;
     case 2:
-      weapon=new fWeapon(this, 30, 15, 1000*mx);//sWeapon(this, 10, 10);
+      weapon=new fWeapon(this, 90, 15, 1000*mx);//sWeapon(this, 10, 10);
       break;
     case 3:
       weapon=new shotgun(this, 90, 10, 1000*mx);
@@ -69,7 +71,7 @@ class colobok {
       weapon=new rLauncher(this, 50, 100);
       break;
     case 5:
-      weapon=new tMaker(this, 50, 10, 1000*mx);
+      weapon=new tMaker(this, 60, 10, 1000*mx);
       break;
     case 6:
       weapon=new laser(this, 0, 1, 1000*mx);

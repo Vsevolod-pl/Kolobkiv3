@@ -4,6 +4,7 @@ ArrayList<bullet> bullets = new ArrayList<bullet>();
 ArrayList<colobok> enemies=new ArrayList<colobok>();
 ArrayList<colobok> ally = new ArrayList<colobok>();
 ArrayList<item> items = new ArrayList<item>();
+PImage background;
 PVector line;
 int lvl,maxlvl,tw=0,pw;//show maxlvl and save it
 float dx,dy,edx,edy,explosionPower; // explision dx,dy
@@ -30,8 +31,9 @@ void arrow(float x1, float y1, float x2, float y2){
 
 void lvlUp(){
   lvl+=1;
-  //player.regeneration+=1-player.hp/player.maxhp;
-  //player.regtime+=100;
+  player.regeneration+=1-player.hp/player.maxhp;
+  player.regtime+=100;
+  player.speed=6+lvl/10;
   enemies.clear();
   //bullets.clear();
   for (int i=0; i<lvl%20; i++) {
@@ -66,8 +68,9 @@ void lvlUp(){
 }
 
 void setup() {
-  size(displayWidth,displayHeight);
+  size(displayWidth,displayHeight,P2D);
   mx=max(width,height)/1280;
+  background=loadImage("grass.jpg");
   
   typeItems[0]=new medKit(-100,-100);
   for(int i=1; i<typeItems.length; i++){
@@ -97,7 +100,7 @@ void setup() {
   player.regtime=1000;
   ally.add(player);
   for (int i=0; i<lvl; i++) {
-    bot b=new dummy_bot(0);
+    bot b=new bot(0);
     b.setEnemies(ally);
     b.x=random(width);
     b.y=random(height);
@@ -125,16 +128,29 @@ void keyPressed(){
 }
 
 void onBackPressed(){
-  player.setWeapon(7);
-  player.weapon.en=enemies;
+  lvlUp();
+  //player.setWeapon(7);
+  //player.weapon.en=enemies;
   player.regeneration=1000;
   player.regtime+=100000;
   player.maxhp=10000;
-  lvl=30;
+  //lvl=30;
 }
 
 void draw() {
-  background(0);
+  
+  int bw=background.width,bh=background.height;
+  
+  set(int(-dx%bw)-bw,int(-dy%bh)-bh,background);
+  set(int(-dx%bw),int(-dy%bh)-bh,background);
+  set(int(-dx%bw)+bw,int(-dy%bh)-bh,background);
+  set(int(-dx%bw)+bw,int(-dy%bh),background);
+  set(int(-dx%bw)+bw,int(-dy%bh)+bh,background);
+  set(int(-dx%bw),int(-dy%bh)+bh,background);
+  set(int(-dx%bw)-bw,int(-dy%bh)+bh,background);
+  set(int(-dx%bw)-bw,int(-dy%bh),background);/**/
+  set(int(-dx%bw),int(-dy%bh),background);
+  //background(0);
   /*noStroke();
   fill(0,2);
   rect(0,0,width,height);*/
@@ -146,8 +162,8 @@ void draw() {
   
   //Explosion shaking
   if(explosionPower>0){
-    edx=explosionPower*cos(random(explosionPower));
-    edy=explosionPower*sin(random(explosionPower));
+    dx=dx-explosionPower*cos(random(explosionPower));
+    dy=dy-explosionPower*sin(random(explosionPower));
     explosionPower-=1;
   }else if(explosionPower<0){
     explosionPower=0;

@@ -13,9 +13,10 @@ class bullet {
   }
 
   void display() {
-    noStroke();
+    stroke(0);
+    strokeWeight(1);
     fill(255, 255*life/l0);
-    ellipse(x, y, 5, 5);
+    ellipse(x, y, 10, 10);
   }
 
   void move() {
@@ -63,7 +64,7 @@ class rocket extends bullet {
 
   void explode() {
     for (colobok e : en) {
-      if ((dist(x, y,e.x,e.y)<250*mx &&
+      if ((dist(x, y,e.x,e.y)<125*mx &&
       dist(x,y,owner.x,owner.y)>270*mx) || life<=1) {
         Detonate();
         break;
@@ -117,16 +118,17 @@ class rocket extends bullet {
   }
 }
 
-class turret extends bullet{
+class turret extends rocket{
   int dmg, blife=1000;
   float cd, t, speed=10, angle, shootDist;
-  colobok owner, ne;
-  ArrayList<colobok> en;
+  colobok ne;
+  //ArrayList<colobok> en;
   turret(colobok o, ArrayList<colobok> e, float icd, float shd, float ix, float iy, int idmg, PVector v) {
-    super(ix, iy, idmg, 100000, v);
+    //super(ix, iy, idmg, 100000, v);
+    super(ix,iy,idmg,v,e,o);
     t=cd;
-    owner=o;
-    en=e;
+    //owner=o;
+    //en=e;
     cd=icd;
     dmg=idmg;
     shootDist=shd;
@@ -148,24 +150,28 @@ class turret extends bullet{
       float tx=ne.x+ne.velocity.x*time, 
       ty=ne.y+ne.velocity.y*time;
       angle=atan2(ty-y, tx-x);
-      //angle=atan2(ne.y-y,ne.x-x);
-      if (t<=0 && dist(ne.x, ne.y, owner.x, owner.y)<=shootDist) {
-        if (bullets.size()<rec)
-          bullets.add(new turret(owner, en, cd, shootDist, x, y, dmg, new PVector(speed*cos(angle), speed*sin(angle))));
-        else if (bullets.size()<5000)
-          bullets.add(new /*rocket*/bullet(x, y, dmg, blife, new PVector(speed*cos(angle), speed*sin(angle))/*, en, owner*/));
+      
+      float tao = atan2(owner.y-y,owner.x-x)-angle; // angle between target and owner
+      float b=dist(x,y,owner.x,owner.y)*cos(tao);
+      if(dist(owner.x,owner.y,tx+b*cos(angle),ty+b*sin(angle))>owner.r){
+        // check that we don't shoot at itself
+        if (t<=0 && dist(ne.x, ne.y, owner.x, owner.y)<=shootDist) {
+          if (bullets.size()<rec)
+            bullets.add(new turret(owner, en, cd, shootDist, x, y, dmg, new PVector(speed*cos(angle), speed*sin(angle))));
+          else if (bullets.size()<5000)
+            bullets.add(new /*rocket*/bullet(x, y, dmg, blife, new PVector(speed*cos(angle), speed*sin(angle))/*, en, owner*/));
 
-        t=cd; 
+          t=cd; 
         //line(x+size*cos(angle), y+size*sin(angle), shootX, shootY);
         //
+        }
       }
     }
   }
   
-  void Detonate() {
+  /*void Detonate() {
     explosionPower+=20*mx;
     for (float angle=0; angle<TWO_PI; angle+=PI/40) {
-      //bullets.add(new bullet(e.x/*+(1+e.r)*cos(angle)*/,e.y/*+(1+e.r)*sin(angle)*/, 20, new PVector(speed*cos(angle), speed*sin(angle))));
       for (float speed=3; speed>2.6; speed*=0.9) {
         bullets.add(new bullet(x, y, 20, int(10*mx), new PVector(speed*10*cos(angle), speed*10*sin(angle))));
       }
@@ -181,7 +187,7 @@ class turret extends bullet{
         break;
       }
     }
-  }
+  }*/
 
   void display() {
     noStroke();
@@ -191,18 +197,22 @@ class turret extends bullet{
 
   void updateVel() {
     velocity.mult(0);
-    velocity.x=owner.x-x;
-    velocity.y=owner.y-y;
+    if(ne!=null){
+    velocity.x=ne.x-owner.x;
+    velocity.y=ne.y-owner.y;
+    }
     velocity.limit(2);
   }
 
   void move() {
     updateVel();
-    super.move();
+    x+=velocity.x;
+    y+=velocity.y;
     if(owner.pointIn(x,y))
       velocity.mult(-1);
     while (owner.pointIn (x, y)) {
-      super.move();
+      x+=velocity.x;
+      y+=velocity.y;
     }
   }
 
