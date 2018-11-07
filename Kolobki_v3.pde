@@ -101,7 +101,7 @@ void lvlUp(){
 
 void setup() {
   size(displayWidth,displayHeight,P2D);
-  mx=max(width,height)/1280;
+  mx=max(width,height)/1280.0;
   
   background=blend_s(loadImage("tiles.jpg"),loadImage("sand.jpg"));
   //background.resize(100,100);
